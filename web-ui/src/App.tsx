@@ -1,25 +1,51 @@
 import './App.css';
-import { Button, Container, Paper, Typography } from '@mui/material';
+import { Button, Container, Paper, Typography, Box } from '@mui/material';
 import React, { useState } from 'react';
-import { Box, Stack } from '@mui/system';
+import { Stack } from '@mui/system';
+import { convertHexToRGB, findMoreSimilarColor } from './helper';
 
 function App() {
-  const [itemList, setItemList] = useState<Array<number>>(new Array<number>(1,5,3,2,4))
+  // Scientific article link https://www.compuphase.com/cmetric.htm
+  // const [itemList, setItemList] = useState<Array<number>>(new Array<number>(1,5,3,2,4))
+  const [boxWidth] = useState('20vw')
+  const [boxHeight] = useState('20vh')
+  const [color1, setColor1] = useState('#ffffff')
+  const [color2, setColor2] = useState('#ffffff')
+  const [compareColor, setCompareColor] = useState('#ffffff')
+  const [compareText, setCompareText] = useState('')
 
   return <Container>
-    <Stack>
-      <Typography textAlign='center' variant='h1'>Sorting Algorithms</Typography>
-      <Typography textAlign='center' variant='h3'>Bubble Sort</Typography>
-      <Paper sx={{ width: '100%', height: '70vh', display: 'flex', justifyContent: 'center', flexDirection: 'column', alignContent: 'space-between' }}>
-         <Box sx={{ outline: '1px solid black', height: '500px' }}>
-          <Stack spacing={2} height='100%' direction='row' justifyContent='space-around' alignItems='flex-end'>
-            {itemList.map((item: number, index: number) => {
-              return <Box key={index} sx={{ height: `calc(100% * (${item} / ${itemList.length}))`, width: '25px', backgroundColor: 'red' }} />
-            })}
-          </Stack>
-         </Box>
-        <Button variant='contained' sx={{ height: '40px' }}>Start</Button>
-      </Paper>
+    <Stack spacing={4} alignItems={'center'}>
+      <Typography textAlign='center' variant='h1'>Color Comparison</Typography>
+      <Stack direction={'row'} spacing={4} justifyContent={'center'}>
+        {/* <Box background={'black'}></Box> */}
+        <Stack direction={'column'}>
+          <Typography>Color 1</Typography>
+          <Box sx={{ background: color1, height: boxHeight, width: boxWidth }}/>
+          <input type="color" value={color1} onChange={(change) => { 
+            setColor1(change.target.value)
+            setCompareText('')
+          }}/>
+        </Stack>
+        <Stack direction={'column'}>
+          <Typography>Color 2</Typography>
+          <Box sx={{ background: color2, height: boxHeight, width: boxWidth }}/>
+          <input type="color" value={color2} onChange={(change) => {
+            setColor2(change.target.value)
+            setCompareText('')
+          }}/>
+        </Stack>
+      </Stack>
+      <Stack direction={'column'}>
+          <Typography>Comparison Color</Typography>
+          <Box sx={{ background: compareColor, height: boxHeight, width: boxWidth }}/>
+          <input type="color" value={compareColor} onChange={(change) => {
+            setCompareColor(change.target.value)
+            setCompareText('')
+          }}/>
+      </Stack>
+      <Typography>{compareText}</Typography>
+      <Button variant={'contained'} sx={{ background: 'black' }} onClick={() => {setCompareText(findMoreSimilarColor(convertHexToRGB(color1), convertHexToRGB(color2), convertHexToRGB(compareColor)))}}>{'Compare'}</Button>
     </Stack>
   </Container>
 }
